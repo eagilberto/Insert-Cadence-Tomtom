@@ -41,11 +41,14 @@ function escolha(){
 	Write-Host "`n"
 	for($ss=0;$ss -lt $seleciona.Length; $ss++){
 		[int]$option=$ss+1
-		Write-Host -NoNewline "$option)" $seleciona[$ss].substring(0,4)
-		Write-host -noNewLine "-"
-		Write-Host -NoNewline $seleciona[$ss].substring(4,2)
-		Write-host -noNewLine "-"
-		Write-Host $seleciona[$ss].substring(6,2)
+		Write-Host -NoNewline "$option) " 
+		Write-Host -NoNewline $seleciona[$ss].substring(0,4) -ForegroundColor Green
+		Write-host -noNewLine "-" -ForegroundColor Green
+		Write-Host -NoNewline $seleciona[$ss].substring(4,2) -ForegroundColor Green
+		Write-host -noNewLine "-" -ForegroundColor Green
+		Write-Host -noNewLine $seleciona[$ss].substring(6,2) -ForegroundColor Green
+		Write-host -noNewLine "-" -ForegroundColor Green
+		Write-Host $seleciona[$ss].substring(9,6) -ForegroundColor Green	
 	}
 	$OP=Read-Host -Prompt "`nSeleciona a data da atividade que deseja adicionar a cadencia [1-$option]"
 	if ($op -match '[a-z]'){
@@ -64,7 +67,8 @@ if(-not($files)){
 	error
 	}
 #Removendo duplicados para exibicao para o usuario
-$seleciona=($files.Name).substring(4,8) |Get-Unique
+#$seleciona=($files.Name).substring(4,8) |Get-Unique
+$seleciona=($files.Name).substring(4,15) |Get-Unique
 if($seleciona.Count -gt 1){
 	$filter=escolha
 }
@@ -72,8 +76,11 @@ else{
 	$filter=$seleciona
 }
 
-$csvFile=Get-ChildItem .\ |Where-Object {$_.Name -match "^run-$filter[tT][0-9]{6}.csv"}
-$gpxFile=Get-ChildItem .\ |Where-Object {$_.Name -match "^run-$filter[tT][0-9]{6}.gpx"}
+#$csvFile=Get-ChildItem .\ |Where-Object {$_.Name -match "^run-$filter[tT][0-9]{6}.csv"}
+#$gpxFile=Get-ChildItem .\ |Where-Object {$_.Name -match "^run-$filter[tT][0-9]{6}.gpx"}
+
+$csvFile=Get-ChildItem .\ |Where-Object {$_.Name -match "^run-$filter.csv"}
+$gpxFile=Get-ChildItem .\ |Where-Object {$_.Name -match "^run-$filter.gpx"}
 if(-not($csvFile)){
 	error
 }
@@ -100,8 +107,8 @@ if($OP -eq "n"){
 
 $currentDir=Get-Location
 $dirDest="$currentDir\old"
-#If new_run-... exist, move to old
-Get-ChildItem .\ |where-Object {$_.name -match 'New_run-[0-9]{8}T[0-9]{6}.gpx'} |Move-Item -Force -Destination $dirDest
+
+Get-ChildItem .\ |Where-Object {$_.name -match 'New_run-[0-9]{8}T[0-9]{6}.gpx'} |Move-Item -Destination $dirDest -Force
 
 Write-Host "`nTrabalhando nos arquivos," -noNewLine
 Write-Host " aguarde!" -ForegroundColor Yellow
